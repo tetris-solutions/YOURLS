@@ -25,8 +25,17 @@ if( !empty( $url ) ) {
 
 	// Update detailed log for stats
 	$log_redirect = yourls_log_redirect( $keyword );
-	
-	yourls_redirect( $url, 301 );
+
+	$queryString = http_build_query($_GET);
+
+	if ($queryString) {
+	    $glue = strpos($url, '?') === false
+            ? '?'
+            : '&';
+	    $url .= $glue . $queryString;
+    }
+
+    yourls_redirect( $url, 301 );
 
 // URL not found. Either reserved, or page, or doesn't exist
 } else {
@@ -38,7 +47,7 @@ if( !empty( $url ) ) {
 	// Either reserved id, or no such id
 	} else {
 		yourls_do_action( 'redirect_keyword_not_found', $keyword );
-		
+
 		yourls_redirect( YOURLS_SITE, 302 ); // no 404 to tell browser this might change, and also to not pollute logs
 	}
 }
